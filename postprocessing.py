@@ -1680,21 +1680,21 @@ def main():
 
     if options.flip_x:
 
-        print('\nFlipping input maps along X')
+        logger.info('Flipping input maps along X')
 
         map1 = map1[:, :, ::-1]
         map2 = map2[:, :, ::-1]
 
     if options.flip_y:
 
-        print('\nFlipping input maps along Y')
+        logger.info('Flipping input maps along Y')
 
         map1 = map1[:, ::-1, :]
         map2 = map2[:, ::-1, :]
 
     if options.flip_z:
 
-        print('\nFlipping input maps along Z')
+        logger.info('Flipping input maps along Z')
 
         map1 = map1[::-1, :, :]
         map2 = map2[::-1, :, :]
