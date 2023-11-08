@@ -1589,6 +1589,15 @@ def main():
     parser.add_option("--random_seed", metavar=123456789, type="int", default=123456789,
                       help="Choose the random seed for High-Resolution Noise Substitution (see option --randomize_below_fsc above)")
 
+    parser.add_option("--flip_x", action="store_true", default=False,
+                      help="Invert handedness of input volumes along the X axis.")
+
+    parser.add_option("--flip_y", action="store_true", default=False,
+                      help="Invert handedness of input volumes along the Y axis.")
+
+    parser.add_option("--flip_z", action="store_true", default=False,
+                      help="Invert handedness of input volumes along the Z axis.")
+
     parser.add_option("--xml", action="store_true", default=False,
                       help="Save FSC curves also in XML format for EMDB deposition.")
 
@@ -1668,6 +1677,27 @@ def main():
     else:
         map2 = map1
     sys.stdout = sys.__stdout__
+
+    if options.flip_x:
+
+        print('\nFlipping input maps along X')
+
+        map1 = map1[:, :, ::-1]
+        map2 = map2[:, :, ::-1]
+
+    if options.flip_y:
+
+        print('\nFlipping input maps along Y')
+
+        map1 = map1[:, ::-1, :]
+        map2 = map2[:, ::-1, :]
+
+    if options.flip_z:
+
+        print('\nFlipping input maps along Z')
+
+        map1 = map1[::-1, :, :]
+        map2 = map2[::-1, :, :]
 
     if np.any(map1.shape != map2.shape):
 
