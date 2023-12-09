@@ -692,13 +692,10 @@ class SymList:
             self.__L = np.vstack((self.__L, np.zeros((4, 4))))
             self.__R = np.vstack((self.__R, np.zeros((4, 4))))
             self.__chain_length = np.append(self.__chain_length, 1)
-            print(f"During adding matrics, the chain_length changed to {self.__chain_length}")
 
         self.set_matrices(self.True_SymNo, L, R)
         self.__chain_length[-1] = chain_length
         self.True_SymNo += 1
-        
-        print(f"After adding matrices the __chain_length is {self.__chain_length}")
 
 
     def Euler_matrix2angles(self, A):
