@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
-# bild file from eular angles 
-# This script is modified from RELION SymList Object and Daniel Asarnow's pyem star2bild.py
+# bild file from Euler angles
+# This script is based on RELION's SymList Object and Daniel Asarnow's pyem star2bild.py
 
 import numpy as np
 import healpy as hp
 from scipy.spatial import cKDTree
 import pandas as pd
-# import numba
+import numba
 
 import os, sys
 
@@ -53,7 +53,7 @@ class SymList:
         self.True_SymNo = 0
 
         self.sym_name = sym_name
-    
+
     def set_matrices(self, i, L, R):
         start_row = 4 * i
         end_row = start_row + 4
@@ -79,24 +79,24 @@ class SymList:
                 G4 ='\0'
 
         if (sym_size > 4 or sym_size<1):
-        
+
             pgGroup = -1
             pgOrder = -1
             return False
-        
+
         # CN
         if sym_size==2 and G1=='C' and G2.isdigit():
-        
+
             pgGroup = self.pg_CN
             pgOrder=int(G2)
             return_true = True
-        
+
         if sym_size==3 and G1=='C' and G2.isdigit() and G3.isdigit():
-        
+
             pgGroup = self.pg_CN
             pgOrder = int(G2 + G3)
             return_true = True
-        
+
         # CI
         elif sym_size==2 and G1=='C' and G2=='I': 
             pgGroup= self.pg_CI
@@ -104,11 +104,11 @@ class SymList:
             return_true = True
         # CS
         elif sym_size==2 and G1=='C' and G2=='S':
-        
+
             pgGroup = self.pg_CS
             pgOrder = -1
             return_true = True
-        
+
         # CNH
         elif sym_size==3 and G1=='C' and G2.isdigit() and G3=='H':
             pgGroup = self.pg_CNH
@@ -118,26 +118,26 @@ class SymList:
             pgGroup = self.pg_CNH
             pgOrder = int(G2 + G3)
             return_true = True
-        
+
         # CNV
         elif sym_size==3 and G1=='C' and G2.isdigit() and G3=='V':
             pgGroup = self.pg_CNV
             pgOrder=int(G2)
             return_true = True
-        
+
         elif (sym_size==4 and G1=='C' and G2.isdigit() and G3.isdigit() and G4=='V'):
-        
+
             pgGroup = self.pg_CNV
             pgOrder = int(G2 + G3)
             return_true = True
-        
+
         # SN
         elif (sym_size==2 and G1=='S' and G2.isdigit() ):
-        
+
             pgGroup = self.pg_SN
             pgOrder=int(G2)
             return_true = True
-        
+
         elif (sym_size==3 and G1=='S' and G2.isdigit() and G3.isdigit() ):
         
             pgGroup = self.pg_SN
@@ -771,7 +771,7 @@ class SymList:
         return output_list
 
 
-# @numba.jit(nopython=True, nogil=True)
+@numba.jit(nopython=True, nogil=True)
 def rot2euler(r, out=None):
     """Decompose rotation matrix into Euler angles"""
     # assert(isrotation(r))
@@ -805,7 +805,7 @@ def rot2euler(r, out=None):
         out[i, 2] = gamma
     return out
 
-# @numba.jit(nopython=True, nogil=True, fastmath=True)
+@numba.jit(nopython=True, nogil=True, fastmath=True)
 def e2r_vec(eu, out=None):
     eu = np.atleast_2d(eu)
     if out is None:
