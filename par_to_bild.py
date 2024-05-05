@@ -905,16 +905,20 @@ def par2df(parfile, cutoff, tomo=False, tilt_max=60, angles_only=True):
     # creating pd.DataFrame with parfile 
     if angles_only:
         header = ANGLES
+        from pyp.inout.metadata import cistem_star_file
+        par_obj = cistem_star_file.Parameters.from_file(parfile)
+        occ_col = par_obj.get_index_of_column(cistem_star_file.OCCUPANCY)
+        tind_col = par_obj.get_index_of_column(cistem_star_file.TIND)
         # relion ANGLES = [ANGLEROT, ANGLETILT, ANGLEPSI]
-        from pyp.inout.metadata import frealign_parfile
+        # from pyp.inout.metadata import frealign_parfile
  
-        pardata = frealign_parfile.Parameters.from_file(parfile).data
+        pardata = par_obj.get_data()
         # Matching relion angles order
 
         if tomo and tilt_max < 60:
-            mask = np.logical_and(pardata[:, 11] > cutoff, np.abs(pardata[:, 17])< tilt_max)
+            mask = np.logical_and(pardata[:, occ_col] > cutoff, np.abs(pardata[:, tind_col])< tilt_max)
         else:
-            mask = pardata[:, 11] > cutoff
+            mask = pardata[:, occ_col] > cutoff
 
         eular_angles = pardata[mask][:, [3, 2, 1]]
 
