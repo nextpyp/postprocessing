@@ -65,7 +65,8 @@ class SymList:
         # identify symmetry group from symmetry name: C1, D2 ...
 
         G1 = self.sym_name[0].upper()
-        G2 = self.sym_name[1].upper()
+        if len(self.sym_name) > 1:
+            G2 = self.sym_name[1].upper()
 
         sym_size = len(self.sym_name)
 
