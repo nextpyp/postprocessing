@@ -967,7 +967,7 @@ def AutoMask(img, apix=1.0, lp=-1, gaussian=False, cosine=True, cosine_edge_widt
         # Or define as threshold a multiple of standard deviations above the mean density value
         thr = imglp.mean() + sigma_threshold * imglp.std()
 
-        method = "%.3f standard deviations above the mean" % sigma_threshold
+        method = "%.3f standard deviation(s) above the mean" % sigma_threshold
 
     else:
 
@@ -975,15 +975,15 @@ def AutoMask(img, apix=1.0, lp=-1, gaussian=False, cosine=True, cosine_edge_widt
 
     if verbose:
 
-        logger.info("Input volume will be low-pass filtered at %.2f A by a %s" %
+        logger.info("Input volume will be low-pass filtered to %.2f A by a %s" %
               (lp, filter_type))
-        logger.info("Input volume stats before filtering: Range=[%.2f, %.3f], Median=%.3f, Mean=%.3f, Std=%.3f" %
+        logger.info("Stats before filtering: Range = [%.2f, %.3f], Median = %.3f, Mean = %.3f, Std = %.3f" %
               (img.min(), img.max(), np.median(img), img.mean(), img.std()))
-        logger.info("Input volume stats after filtering: Range=[%.3f, %.3f], Median=%.3f, Mean=%.3f, Std=%.3f" %
+        logger.info("Stats after filtering: Range = [%.3f, %.3f], Median = %.3f, Mean = %.3f, Std = %.3f" %
               (imglp.min(), imglp.max(), np.median(imglp), imglp.mean(), imglp.std()))
         logger.info("Thresholding method: %s" % method)
         logger.info("Threshold for initial binarization: %.6f" % thr)
-        logger.info("Binary mask will be expanded by %.1f voxels plus a soft cosine-edge of %.1f voxels" %
+        logger.info("Binary mask will be expanded by %.1f voxel(s) plus a soft cosine-edge of %.1f voxel(s)" %
               (expand_width, expand_soft_width))
 
     if floodfill_rad == None and floodfill_fraction == None:
@@ -1536,7 +1536,7 @@ def main():
                       help="Use this fraction of the voxels with the highest densities (0.10 = top 10 percent highest densities) to generate the initial binary volume in auto-masking. This has precedence over --automask_sigma.")
 
     parser.add_option("--automask_sigma", metavar=1.0, default=1.0, type="float",
-                      help="Use this many standard deviations above the mean density value as threshold for initial binary volume generation in auto-masking. This is the default option.")
+                      help="Use this many standard deviation(s) above the mean density value as threshold for initial binary volume generation in auto-masking. This is the default option.")
 
     parser.add_option("--automask_expand_width", metavar=3.0, default=3.0, type="float",
                       help="Width in pixels to expand the binary mask in auto-masking. Useful to make the mask more generous and correct for imperfections of the initial binarization.")
@@ -2100,7 +2100,7 @@ def main():
             else:
 
               maxres = 2 * options.angpix
-        logger.info('Estimating contrast decay (B-factor) from Guinier plot between %.3f A and %.3f A' % (float(minres), float(maxres[0])))
+        logger.info('Estimating contrast decay (B-factor) from Guinier plot between %.2f A and %.2f A' % (float(minres), float(maxres[0])))
 
         hirange = 1. / freq <= minres
         lorange = 1. / freq >= maxres

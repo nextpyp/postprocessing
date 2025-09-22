@@ -77,7 +77,7 @@ Options:
                         densities (0.10 = top 10 percent highest densities) to
                         generate the initial binary volume in auto-masking.
                         This has precedence over --automask_sigma.
-  --automask_sigma=1.0  Use this many standard deviations above the mean
+  --automask_sigma=1.0  Use this many standard deviation(s) above the mean
                         density value as threshold for initial binary volume
                         generation in auto-masking. This is the default
                         option.
