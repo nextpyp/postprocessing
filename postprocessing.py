@@ -1466,8 +1466,8 @@ def Fsc2Xml(filename, x, y):
         for i in np.arange(len(x)):
 
             f.write('  <coordinate>\n')
-            f.write('    <x>%.6f</x>\n' % x[i])
-            f.write('    <y>%.6f</y>\n' % y[i])
+            f.write('    <x>%.6f</x>\n' % x[i][0])
+            f.write('    <y>%.6f</y>\n' % y[i][0])
             f.write('  </coordinate>\n')
 
         f.write('</fsc>')
@@ -2100,8 +2100,7 @@ def main():
             else:
 
               maxres = 2 * options.angpix
-
-        logger.info('Estimating contrast decay (B-factor) from Guinier plot between %.3f A and %.3f A' % (minres, maxres))
+        logger.info('Estimating contrast decay (B-factor) from Guinier plot between %.3f A and %.3f A' % (float(minres), float(maxres[0])))
 
         hirange = 1. / freq <= minres
         lorange = 1. / freq >= maxres
@@ -2195,7 +2194,7 @@ def main():
             lopass_print = options.lowpass
 
         logger.info('Band-pass filtering between resolution cutoffs %.3f A and %.3f A' %
-              (hipass_print, lopass_print))
+              (float(hipass_print), float(lopass_print[0])))
 
         if options.gaussian:
 
