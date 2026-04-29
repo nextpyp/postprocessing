@@ -1737,6 +1737,7 @@ def main():
         if options.automask_input == 0:
 
             maskautoin = ne.evaluate( "0.5 * (map1 + map2)" )
+            assert maskautoin.min() < options.automask_threshold and maskautoin.max() > options.automask_threshold, f"Threshold for masking must be within the density range: [{maskautoin.min()},{maskautoin.max()}]"
 
         elif options.automask_input == 1:
 
