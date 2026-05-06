@@ -688,11 +688,6 @@ import numexpr as ne
 import warnings
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 
-from pyp.system.logging import initialize_pyp_logger
-from pyp.utils import get_relative_path
-relative_path = str(get_relative_path(__file__))
-logger = initialize_pyp_logger(log_name=relative_path)
-
 pi = np.pi  # global PI
 
 def RadialIndices(imsize=[100, 100], rounding=True, normalize=False, rfft=False, xyz=[0, 0, 0], nozero=True):
@@ -947,7 +942,7 @@ def AutoMask(img, apix=1.0, lp=-1, gaussian=False, cosine=True, cosine_edge_widt
     else:
 
         imglp = FilterCosine(img, apix=apix, lp=lp, width=cosine_edge_width)
-        filter_type = "cosine-edge across %.1f Fourier voxels" % cosine_edge_width
+        filter_type = "cosine-edge across %.2f Fourier voxels" % cosine_edge_width
 
     # Then we define a threshold for binarization of the low-pass filtered map:
     if absolute_threshold != None:
@@ -959,7 +954,7 @@ def AutoMask(img, apix=1.0, lp=-1, gaussian=False, cosine=True, cosine_edge_widt
 
         # Binarize the voxels with the top fraction_threshold densities
         thr = np.percentile(imglp, 100.0 - 100.0 * fraction_threshold)
-        method = "highest %.1f percent of densities" % (
+        method = "highest %.2f percent of densities" % (
             fraction_threshold * 100)
 
     elif sigma_threshold != None:
@@ -967,7 +962,7 @@ def AutoMask(img, apix=1.0, lp=-1, gaussian=False, cosine=True, cosine_edge_widt
         # Or define as threshold a multiple of standard deviations above the mean density value
         thr = imglp.mean() + sigma_threshold * imglp.std()
 
-        method = "%.3f standard deviation(s) above the mean" % sigma_threshold
+        method = "%.2f standard deviation(s) above the mean" % sigma_threshold
 
     else:
 
@@ -975,15 +970,15 @@ def AutoMask(img, apix=1.0, lp=-1, gaussian=False, cosine=True, cosine_edge_widt
 
     if verbose:
 
-        logger.info("Input volume will be low-pass filtered to %.2f A by a %s" %
+        print("Input volume will be low-pass filtered to %.2f A by a %s" %
               (lp, filter_type))
-        logger.info("Stats before filtering: Range = [%.2f, %.3f], Median = %.3f, Mean = %.3f, Std = %.3f" %
+        print("Stats before filtering: Range = [%.2f, %.2f], Median = %.2f, Mean = %.2f, Std = %.2f" %
               (img.min(), img.max(), np.median(img), img.mean(), img.std()))
-        logger.info("Stats after filtering: Range = [%.3f, %.3f], Median = %.3f, Mean = %.3f, Std = %.3f" %
+        print("Stats after filtering: Range = [%.2f, %.2f], Median = %.2f, Mean = %.2f, Std = %.2f" %
               (imglp.min(), imglp.max(), np.median(imglp), imglp.mean(), imglp.std()))
-        logger.info("Thresholding method: %s" % method)
-        logger.info("Threshold for initial binarization: %.6f" % thr)
-        logger.info("Binary mask will be expanded by %.1f voxel(s) plus a soft cosine-edge of %.1f voxel(s)" %
+        print("Thresholding method: %s" % method)
+        print("Threshold for initial binarization: %.6f" % thr)
+        print("Binary mask will be expanded by %.2f voxel(s) plus a soft cosine-edge of %.2f voxel(s)" %
               (expand_width, expand_soft_width))
 
     if floodfill_rad == None and floodfill_fraction == None:
@@ -997,7 +992,7 @@ def AutoMask(img, apix=1.0, lp=-1, gaussian=False, cosine=True, cosine_edge_widt
 
             if verbose:
 
-                logger.info("Initializing flood-filling method with a sphere of radius %.1f voxels placed at [%d, %d, %d]" % (
+                print("Initializing flood-filling method with a sphere of radius %.2f voxels placed at [%d, %d, %d]" % (
                     floodfill_rad, floodfill_xyz[0], floodfill_xyz[1], floodfill_xyz[2]))
 
             # This will be the initial mask
@@ -1008,7 +1003,7 @@ def AutoMask(img, apix=1.0, lp=-1, gaussian=False, cosine=True, cosine_edge_widt
 
             if verbose:
 
-                logger.info("Initializing flood-filling method binarizing the highest %.1f percent of densities" %
+                print("Initializing flood-filling method binarizing the highest %.2f percent of densities" %
                       (floodfill_fraction * 100))
 
             floodfill_fraction_thr = np.sort(np.ravel(imglp))[np.round((1.0 - floodfill_fraction) * np.prod(
@@ -1143,7 +1138,7 @@ def MaskAutoExpand(map1, map2, apix=1.0, init_lp=15, fraction_threshold=0.01, in
 
         if verbose:
 
-            logger.info('Iteration %d, Masked res: %.3f A, True masked res: %.3f A, Current hard edge = %d pix, Current soft edge = %d pix' % (
+            print('Iteration %d, Masked res: %.2f A, True masked res: %.2f A, Current hard edge = %d pix, Current soft edge = %d pix' % (
                 i+1, fsc['masked_res'], fsc['masked_true_res'], edge, soft_edge))
 
         if fsc['masked_true_res'] <= fsc['masked_res']:
@@ -1615,32 +1610,32 @@ def main():
 
     if options.mw != None and options.mw < 0.0:
 
-        logger.error('Molecular mass cannot be negative!')
+        print('Molecular mass cannot be negative!')
         sys.exit(1)
 
     if options.mw_ignore != None and options.mw_ignore < 0.0:
 
-        logger.error('Molecular mass to be ignored cannot be negative!')
+        print('Molecular mass to be ignored cannot be negative!')
         sys.exit(1)
 
     if options.angpix == None:
 
-        logger.warning('Pixel size was not specified. Assuming 1.0 A/pixel.')
+        print('Pixel size was not specified. Assuming 1.0 A/pixel.')
         options.angpix = 1.0
 
     elif options.angpix <= 0.0:
 
-        logger.error('Pixel size must be greater than zero!')
+        print('Pixel size must be greater than zero!')
         sys.exit(1)
 
     if options.cosine_edge_width != None and options.cosine_edge_width < 0.0:
 
-        logger.error('Cosine edge width cannot be negative!')
+        print('Cosine edge width cannot be negative!')
         sys.exit(1)
 
     if options.randomize_below_fsc != None and (options.randomize_below_fsc < -1.0 or options.randomize_below_fsc > 1.0):
 
-        logger.error(
+        print(
             'FSC values for phase-randomization must be in the range [-1,1]!')
         sys.exit(1)
 
@@ -1680,28 +1675,28 @@ def main():
 
     if options.flip_x:
 
-        logger.info('Flipping input maps along X')
+        print('Flipping input maps along X')
 
         map1 = map1[:, :, ::-1]
         map2 = map2[:, :, ::-1]
 
     if options.flip_y:
 
-        logger.info('Flipping input maps along Y')
+        print('Flipping input maps along Y')
 
         map1 = map1[:, ::-1, :]
         map2 = map2[:, ::-1, :]
 
     if options.flip_z:
 
-        logger.info('Flipping input maps along Z')
+        print('Flipping input maps along Z')
 
         map1 = map1[::-1, :, :]
         map2 = map2[::-1, :, :]
 
     if np.any(map1.shape != map2.shape):
 
-        logger.error('Input maps must be the same size!')
+        print('Input maps must be the same size!')
         sys.exit(1)
 
     # We check if there is a mask file and if not, should we create one?
@@ -1754,9 +1749,9 @@ def main():
 
     if options.automask_optimize:
 
-        logger.info('Starting mask optimization')
+        print('Starting mask optimization')
         mask,fsc_optimized = MaskAutoExpand(map1, map2, apix=options.angpix, init_lp=options.automask_lp, fraction_threshold=0.01, init_hard_edge=0, init_soft_edge=3, randomize_below_fsc=0.8, fsc_thr=options.fsc_threshold, random_seed=options.random_seed, interp=False, verbose=True)
-        logger.info('Done optimizing mask.')
+        print('Done optimizing mask.')
 
     # If a spherical mask or an auto-mask were created, we need to save it (this will be the combination of all masks provided or created!):
     if options.mask_radius or options.automask or options.automask_optimize:
@@ -1787,16 +1782,16 @@ def main():
 
     if not options.skip_fsc:
 
-        # logger.info('Calculating unmasked FSC')
+        # print('Calculating unmasked FSC')
 
         fsc = FCC(map1, map2)
 
         res = ResolutionAtThreshold(
             freq[1:], fsc[1:NSAM], options.fsc_threshold, fsc_interp)
-        # logger.info('FSC >= %.3f until %.3f A (unmasked)' %
+        # print('FSC >= %.2f until %.2f A (unmasked)' %
         #        (options.fsc_threshold, res))
 
-        # logger.info('Area under FSC (unmasked): %.3f' % fsc[1:NSAM].sum())
+        # print('Area under FSC (unmasked): %.2f' % fsc[1:NSAM].sum())
 
         dat = np.append(dat, fsc[:NSAM], axis=1)  # Append the unmasked FSC
         head += 'FSC-unmasked\t'
@@ -1809,7 +1804,7 @@ def main():
 
             if options.mask == None:  # If MW is specified but no mask, we issue a warning:
 
-                logger.warning('You specified MW without a mask. This may produce inaccurate results!')
+                print('You specified MW without a mask. This may produce inaccurate results!')
 
                 mask = np.ones(map1.shape, dtype='float')
                 mrc.write(mask, options.out + '-mask.mrc', header=common_header)
@@ -1818,16 +1813,16 @@ def main():
             map1masked = ne.evaluate( "map1 * mask" )
             map2masked = ne.evaluate( "map2 * mask" )
 
-            # logger.info('Calculating masked FSC')
+            # print('Calculating masked FSC')
 
             fsc_mask = FCC(map1masked, map2masked)
 
             res_mask = ResolutionAtThreshold(
                 freq[1:], fsc_mask[1:NSAM], options.fsc_threshold, fsc_interp)
-            # logger.info('FSC >= %.3f until %.3f A (masked)' %
+            # print('FSC >= %.2f until %.2f A (masked)' %
             #        (options.fsc_threshold, res_mask))
 
-            # logger.info('Area under FSC (masked): %.3f' % fsc_mask[1:NSAM].sum())
+            # print('Area under FSC (masked): %.2f' % fsc_mask[1:NSAM].sum())
 
             # Append the masked FSC
             dat = np.append(dat, fsc_mask[:NSAM], axis=1)
@@ -1848,7 +1843,7 @@ def main():
 
                   rand_res = options.randomize_beyond
 
-                logger.info('Randomizing phases beyond %.3f A' % rand_res)
+                print('Randomizing phases beyond %.2f A' % rand_res)
                 rand_freq = 1.0 / rand_res
 
                 # We have to enforce the random seed otherwise different runs would not be comparable
@@ -1863,7 +1858,7 @@ def main():
                 map1randphasemasked = ne.evaluate( "map1randphase * mask" )
                 map2randphasemasked = ne.evaluate( "map2randphase * mask" )
 
-                # logger.info('Calculating masked FSC for phase-randomized maps')
+                # print('Calculating masked FSC for phase-randomized maps')
 
                 fsc_mask_rnd = FCC(
                     map1randphasemasked, map2randphasemasked)
@@ -1880,10 +1875,10 @@ def main():
 
                 res_mask_true = ResolutionAtThreshold(
                     freq[1:], fsc_mask_true[1:NSAM], options.fsc_threshold, fsc_interp)
-                # logger.info('FSC >= %.3f until %.3f A (masked - true)' %
+                # print('FSC >= %.2f until %.2f A (masked - true)' %
                 #        (options.fsc_threshold, res_mask_true))
 
-                # logger.info('Area under FSC (masked - true): %.3f' % fsc_mask_true[1:NSAM].sum())
+                # print('Area under FSC (masked - true): %.2f' % fsc_mask_true[1:NSAM].sum())
 
                 # Append the true masked FSC
                 dat = np.append(dat, fsc_mask_true[:NSAM], axis=1)
@@ -1908,27 +1903,27 @@ def main():
                 maskvoxsum = ne.evaluate( "sum(mask * mask)" )
                 fmask = maskvoxsum / np.prod(mask.shape)
 
-                logger.info('Calculating Single-Particle Wiener filter')
-                logger.info('Fraction of particle within the volume (Fpart): %.6f' % fpart)
-                logger.info('Fraction of mask within the volume (Fmask): %.6f' % fmask)
+                print('Calculating Single-Particle Wiener filter')
+                print('Fraction of particle within the volume (Fpart): %.6f' % fpart)
+                print('Fraction of mask within the volume (Fmask): %.6f' % fmask)
                 if options.mw_ignore > 0.0:
 
-                    logger.info(
+                    print(
                         'Fraction of densities to be ignored within the volume (Fignore): %.6f' % fignore)
-                    logger.info('Fpart/(Fmask-Fignore) ratio: %.6f' %
+                    print('Fpart/(Fmask-Fignore) ratio: %.6f' %
                           (fpart / (fmask - fignore)))
 
                     if (fpart / (fmask - fignore)) >= 1.0:
 
-                        logger.warning('Your particle occupies a volume bigger than the mask. Mask is probably too tight or even too small!')
+                        print('Your particle occupies a volume bigger than the mask. Mask is probably too tight or even too small!')
 
                 else:
 
-                    logger.info('Fpart/Fmask ratio: %.6f' % (fpart / fmask))
+                    print('Fpart/Fmask ratio: %.6f' % (fpart / fmask))
 
                     if (fpart / fmask) >= 1.0:
 
-                        logger.warning('Your particle occupies a volume bigger than the mask. Mask is probably too tight or even too small!')
+                        print('Your particle occupies a volume bigger than the mask. Mask is probably too tight or even too small!')
 
                 # Let's do Single-Particle Wiener filtering following (Sindelar & Grigorieff, 2012):
 
@@ -1945,10 +1940,10 @@ def main():
 
                 res_spw = ResolutionAtThreshold(
                     freq[1:], fsc_spw[1:NSAM], options.fsc_threshold, fsc_interp)
-                # logger.info('FSC >= %.3f until %.3f A (volume-normalized)' %
+                # print('FSC >= %.2f until %.2f A (volume-normalized)' %
                 #        (options.fsc_threshold, res_spw))
 
-                # logger.info('Area under FSC (volume-normalized): %.3f' % fsc_spw[1:NSAM].sum())
+                # print('Area under FSC (volume-normalized): %.2f' % fsc_spw[1:NSAM].sum())
 
                 # Append the FSC-SPW
                 dat = np.append(dat, fsc_spw[:NSAM], axis=1)
@@ -1958,7 +1953,7 @@ def main():
 
     else:
 
-        logger.info('Skipping FSC calculations')
+        print('Skipping FSC calculations')
 
     # 1. Sum the two half-reconstructions:
     fullmap = ne.evaluate( "0.5 * (map1 + map2)" )
@@ -1969,7 +1964,7 @@ def main():
     # 2. Apply FSC weighting or SPW filter to the final map, accordingly:
     if options.skip_fsc_weighting == False:
 
-        logger.info('Applying FSC weighting')
+        print('Applying FSC weighting')
         if options.mask == None and options.mw == None:
 
             # Derive weights from unmasked FSC
@@ -2021,7 +2016,7 @@ def main():
     # 3. Sharpen map by recovering amplitudes from detector's MTF:
     if options.mtf != None:
 
-        logger.info('Dividing map by the detector MTF')
+        print('Dividing map by the detector MTF')
 
         try:
 
@@ -2039,7 +2034,7 @@ def main():
 
             else:
 
-                logger.warning('Could not read MTF file! Ignoring MTF')
+                print('Could not read MTF file! Ignoring MTF')
                 ignore_mtf = True
 
         if ignore_mtf == False:
@@ -2102,6 +2097,7 @@ def main():
 
               maxres = 2 * options.angpix
         logger.info('Estimating contrast decay (B-factor) from Guinier plot between %.2f A and %.2f A' % (float(minres), float(maxres[0])))
+        print('Estimating contrast decay (B-factor) from Guinier plot between %.2f A and %.2f A' % (float(minres), float(maxres)))
 
         hirange = 1. / freq <= minres
         lorange = 1. / freq >= maxres
@@ -2109,11 +2105,11 @@ def main():
         resrange = resrange[:, 0]
         fit = np.polyfit(freq2[resrange, 0], lnF[resrange], deg=1)
         fitline = fit[0] * freq2 + fit[1]
-        logger.info('Slope of fit: %.4f' % (fit[0]))
-        logger.info('Intercept of fit: %.4f' % (fit[1]))
-        logger.info('Correlation of fit: %.5f' %
+        print('Slope of fit: %.4f' % (fit[0]))
+        print('Intercept of fit: %.4f' % (fit[1]))
+        print('Correlation of fit: %.5f' %
               (np.corrcoef(lnF[resrange], fitline[resrange, 0])[0, 1]))
-        logger.info('B-factor for contrast restoration: %.4f A^2' % (4.0 * fit[0]))
+        print('B-factor for contrast restoration: %.4f A^2' % (4.0 * fit[0]))
 
         fullmap = FilterBfactor(
             fullmap, apix=options.angpix, B=4.0 * fit[0], return_filter=False)
@@ -2128,11 +2124,11 @@ def main():
 
         if options.cosine == False:
 
-            logger.warning('You should probably specify --cosine or --tophat option to band-pass filter your map after sharpening!')
+            print('You should probably specify --cosine or --tophat option to band-pass filter your map after sharpening!')
 
     # 5. Apply an ad-hoc B-factor for smoothing or sharpening the map, if provided:
     if options.adhoc_bfac != 0.0:
-        logger.info('Applying ad-hoc B-factor to the map')
+        print('Applying ad-hoc B-factor to the map')
 
         fullmap = FilterBfactor(
             fullmap, apix=options.angpix, B=options.adhoc_bfac, return_filter=False)
@@ -2146,11 +2142,11 @@ def main():
 
         if options.cosine == False:
 
-            logger.warning('You should probably specify --cosine or --tophat option to band-pass filter your map after sharpening!')
+            print('You should probably specify --cosine or --tophat option to band-pass filter your map after sharpening!')
 
     if options.whiten:
 
-        logger.info('Whitening the map')
+        print('Whitening the map')
         # Below, use ps=True to whiten the radial Power Spectrum (cisTEM) instead of the Amplitude Spectrum (IMAGIC). Results are visually almost identical, but whitening amplitudes seems to give a slightly more "peaky" (sharp) map as measured by kurtosis.
         whitened, filt = FilterWhiten(
             ne.evaluate( "fullmap * mask" ), ps=~options.whiten_amps, return_filter=True)
@@ -2194,7 +2190,7 @@ def main():
 
             lopass_print = options.lowpass
 
-        logger.info('Band-pass filtering between resolution cutoffs %.3f A and %.3f A' %
+        print('Band-pass filtering between resolution cutoffs %.2f A and %.2f A' %
               (float(hipass_print), float(lopass_print[0])))
 
         if options.gaussian:
@@ -2272,7 +2268,7 @@ def main():
 
     # 8. Apply mask, if provided:
     if options.mask != None or options.mw != None:
-        # logger.info('Masking the map')
+        # print('Masking the map')
         masked = ne.evaluate( "fullmap * mask" )
 
         mrc.write(masked, options.out + '-masked.mrc', header=common_header)
