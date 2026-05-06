@@ -2096,7 +2096,7 @@ def main():
             else:
 
               maxres = 2 * options.angpix
-        logger.info('Estimating contrast decay (B-factor) from Guinier plot between %.2f A and %.2f A' % (float(minres), float(maxres[0])))
+        assert minres > maxres, f"Min res ({minres:.2f} A) must be greater than Max res ({float(maxres):.2f} A)!"
         print('Estimating contrast decay (B-factor) from Guinier plot between %.2f A and %.2f A' % (float(minres), float(maxres)))
 
         hirange = 1. / freq <= minres
